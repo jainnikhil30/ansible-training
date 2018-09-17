@@ -1,4 +1,4 @@
-Environment installation
+Environment installation:
 
 You will need few things to start with since the whole environment is prepared in Vagrant
 
