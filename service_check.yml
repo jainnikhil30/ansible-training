@@ -1,8 +1,0 @@
----
-# Make sure single service is runnning
-- hosts: localhost
-  tasks:
-    - name: Service is running
-      service:
-        name: auditd
-        state: started
