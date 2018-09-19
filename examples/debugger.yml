@@ -1,0 +1,11 @@
+---
+# Simple example of debugger use
+- hosts: localhost
+  debugger: on_failed
+  gather_facts: no
+  vars:
+    my_var: some_value_i_dont_need
+  tasks:
+    - name: Try to print variable that does not exist
+      debug:
+        msg: '{{ not_existing_var }}'
