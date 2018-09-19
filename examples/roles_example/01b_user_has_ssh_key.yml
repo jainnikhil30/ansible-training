@@ -1,0 +1,15 @@
+---
+# Make sure that specified user has
+# correct SSH key for public key authentication
+- hosts: "{{ _hosts | default('all') }}"
+  user: "{{ _user | default('root') }}"
+  vars:
+    ssh_pubkey_file: "{{ _ssh_pubkey_file | default('/root/.ssh/id_rsa.pub') }}"
+  tasks:
+    - name: Configure authorized_keys
+      authorized_key:
+        exclusive: yes
+        state: present
+        user: "{{ _user | default('root') }}"
+        key: "{{ lookup('file', ssh_pubkey_file) }}"
+

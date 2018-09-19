@@ -1,0 +1,11 @@
+---
+# Configure common things for all servers
+
+- name: RedHat | Common settings
+  include_tasks: redhat.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: Debian | Common settings
+  include_tasks: debian.yml
+  when: ansible_os_family == 'Debian'
+

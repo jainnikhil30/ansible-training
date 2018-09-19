@@ -1,0 +1,16 @@
+---
+# Configure commong things for RedHat type OS
+
+- name: RedHat | Install packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ common_packages }}"
+  when: ansible_distribution != 'Fedora'
+
+- name: RedHat | Install packages
+  dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ common_packages }}"
+  when: ansible_distribution == 'Fedora'

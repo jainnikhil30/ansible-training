@@ -1,0 +1,29 @@
+---
+# Defaults for roles/users
+
+configure_sudo: no
+users_default_shell: /bin/bash
+
+users:
+  - username: ansible
+    name: Base ansible user
+    uid: 2999
+    gid: 2999
+    authorized:
+      - ansible.pub
+      - admin.pub
+    sudo_nopasswd: yes
+    sudo_commands:
+      - ALL
+  - username: admin
+    name: Default Admin
+    uid: 3000
+    gid: 3000
+    authorized:
+      - admin.pub
+      - root.pub
+    sudo_nopasswd: yes
+    sudo_commands:
+      - ALL
+
+users_deleted: []

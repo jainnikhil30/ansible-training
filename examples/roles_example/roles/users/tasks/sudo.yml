@@ -1,0 +1,24 @@
+---
+# Tasks for configuring SUDO on the server
+# - needs valid template of sudoers file
+- name: Users | Install sudo package
+  dnf:
+    name: sudo
+    state: present
+
+- name: Users | Create sudoers.d directory
+  file:
+    path: /etc/sudoers.d
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+
+- name: Users | Copy basic sudoers
+  template:
+    src: sudoers.j2
+    dest: /etc/sudoers
+    owner: root
+    group: root
+    mode: 0440
+

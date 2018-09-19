@@ -1,0 +1,85 @@
+---
+# Make sure that specified user has
+# correct SSH key for public key authentication
+- hosts: all
+  user: "{{ _user | default('root') }}"
+  vars:
+    configure_sudo: no
+    users_default_shell: /bin/bash
+    users:
+      - username: ansible
+        name: Base ansible user
+        uid: 2999
+        gid: 2999
+        authorized:
+          - ansible.pub
+          - admin.pub
+        sudo_nopasswd: yes
+        sudo_commands:
+          - ALL
+      - username: admin
+        name: Default Admin
+        uid: 3000
+        gid: 3000
+        authorized:
+          - admin.pub
+          - root.pub
+        sudo_nopasswd: yes
+        sudo_commands:
+          - ALL
+    users_deleted: []
+  tasks:
+    # Create users groups
+    - name: Users | Per-user group creation
+      group:
+        name: "{{ item.username }}"
+        gid: "{{ item.gid if item.gid is defined else item.uid }}"
+        state: present
+      loop: "{{ users }}"
+
+    # Users creation
+    - name: Users | Specified users creation
+      user:
+        name: "{{ item.username }}"
+        group: "{{ item.username }}"
+        shell: "{{ item.shell if item.shell is defined else users_default_shell }}"
+        password: "{{ item.password if item.password is defined else '!' }}"
+        comment: "{{ item.name }}"
+        uid: "{{ item.uid }}"
+        createhome: yes
+      loop: "{{ users }}"
+
+    # Setup authorized_keys via core module, copy keys from /files/name.pub
+    - name: Users | Setup authorized_keys for users
+      authorized_key:
+        user: "{{ item.0.username }}"
+        key: "{{ lookup('file', item.1) }}"
+        manage_dir: yes
+      loop: "{{ users | subelements('authorized', skip_missing=True) }}"
+
+    # Tasks for configuring SUDO on the server
+    # - needs valid template of sudoers file
+    - name: Users | Install sudo package
+      dnf:
+        name: sudo
+        state: present
+      when: configure_sudo
+
+    - name: Users | Create sudoers.d directory
+      file:
+        path: /etc/sudoers.d
+        owner: root
+        group: root
+        mode: 0755
+        state: directory
+      when: configure_sudo
+
+    - name: Users | Copy basic sudoers
+      template:
+        src: sudoers.j2
+        dest: /etc/sudoers
+        owner: root
+        group: root
+        mode: 0440
+      when: configure_sudo
+

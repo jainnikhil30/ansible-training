@@ -1,0 +1,31 @@
+---
+# Configure users
+
+# Create users groups
+- name: Users | Per-user group creation
+  group:
+    name: "{{ item.username }}"
+    gid: "{{ item.gid if item.gid is defined else item.uid }}"
+    state: present
+  loop: "{{ users }}"
+
+# Users creation
+- name: Users | Specified users creation
+  user:
+    name: "{{ item.username }}"
+    group: "{{ item.username }}"
+    shell: "{{ item.shell if item.shell is defined else users_default_shell }}"
+    password: "{{ item.password if item.password is defined else '!' }}"
+    comment: "{{ item.name }}"
+    uid: "{{ item.uid }}"
+    createhome: yes
+  loop: "{{ users }}"
+
+# Setup authorized_keys via core module, copy keys from /files/name.pub
+- name: Users | Setup authorized_keys for users
+  authorized_key:
+    user: "{{ item.0.username }}"
+    key: "{{ lookup('file', item.1) }}"
+    manage_dir: yes
+  loop: "{{ users | subelements('authorized', skip_missing=True) }}"
+

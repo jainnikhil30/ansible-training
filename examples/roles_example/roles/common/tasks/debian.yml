@@ -1,0 +1,9 @@
+---
+# Configure commong things for Debian type OS
+
+- name: Debian | Install packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ common_packages }}"
+

@@ -1,0 +1,8 @@
+---
+# Defaults for role/common
+
+common_packages:
+  - htop
+  - iotop
+  - iftop
+

@@ -1,0 +1,15 @@
+---
+# Make sure that specified user has
+# correct SSH key for public key authentication
+- hosts: ansible-training-remote
+  user: root
+  vars:
+    ssh_pubkey_file: /root/.ssh/id_rsa.pub
+  tasks:
+    - name: Configure authorized_keys
+      authorized_key:
+        exclusive: yes
+        state: present
+        user: root
+        key: "{{ lookup('file', ssh_pubkey_file) }}"
+

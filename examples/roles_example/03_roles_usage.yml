@@ -1,0 +1,8 @@
+---
+# Make a playbook with some roles
+- hosts: all
+  user: root
+  roles:
+    - common
+    - users
+

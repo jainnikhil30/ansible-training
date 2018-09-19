@@ -1,0 +1,10 @@
+---
+# Users management tasks
+
+- name: Users | Import users tasks
+  import_tasks: users.yml
+
+- name: Users | Include SUDO tasks
+  include_tasks: sudo.yml
+  when: configure_sudo
+
