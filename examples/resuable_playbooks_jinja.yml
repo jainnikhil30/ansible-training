@@ -1,0 +1,10 @@
+---
+# Simple reusable playbook for managing services
+# - pass the service name and state as extra variables
+- hosts: "{{ _hosts | default('localhost') }}"
+  user: "{{ _user | default('root') }}"
+  tasks:
+    - name: Manage service
+      service:
+        name: "{{ service }}"
+        state: "{{ state | default('started') }}"
