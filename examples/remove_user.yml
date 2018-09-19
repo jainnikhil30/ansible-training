@@ -1,0 +1,8 @@
+---
+# Make sure a user doesn't exist
+- hosts: localhost
+  tasks:
+    - name: Remove user
+      user:
+        name: evil_user
+        state: absent
